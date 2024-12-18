@@ -54,9 +54,9 @@ class Compte
         return $this;
     }
 
-    public function getDDateDebloquage(): ?DateTimeInterface
+    public function getDDateDebloquage(): ?string
     {
-        return $this->d_date_debloquage;
+        return $this->d_date_debloquage->format('Y-m-d H:i:s');
     }
 
     public function setDDateDebloquage(?\DateTimeInterface $d_date_debloquage): self
@@ -76,12 +76,12 @@ class Compte
         return $this;
     }
 
-    public function getDDateExpirationPin(): ?DateTimeInterface
+    public function getDDateExpirationPin(): ?string
     {
-        return $this->d_date_expiration_pin;
+        return $this->d_date_expiration_pin->format('Y-m-d H:i:s');
     }
 
-    public function setDDateExpirationPin(?string $d_date_expiration_pin): self
+    public function setDDateExpirationPin(?DateTimeInterface $d_date_expiration_pin): self
     {
         $this->d_date_expiration_pin = $d_date_expiration_pin;
         return $this;

@@ -22,9 +22,9 @@ services:
     image: postgres:15
     container_name: inscription_db
     environment:
-      POSTGRES_USER: inscription
-      POSTGRES_PASSWORD: inscription
-      POSTGRES_DB: relevesnotes
+      POSTGRES_USER: accessapi
+      POSTGRES_PASSWORD: accessapi
+      POSTGRES_DB: accessapi
     ports:
       - "5433:5432"  # Utilisez le bon port pour éviter le conflit
     volumes:

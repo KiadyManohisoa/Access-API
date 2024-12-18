@@ -1,0 +1,25 @@
+<?php 
+
+
+    namespace App\Model;
+
+    use Symfony\Component\HttpFoundation\JsonResponse;
+
+    class ModelRender {
+
+        public function __construct()
+        {}
+
+        public function render(int $status, ?string $error, ?array $data) : JsonResponse{
+
+            return new JsonResponse( [
+                    'status' => $status,
+                    'data' => $data,
+                    'error' => $error
+                ]
+
+            );
+        }
+    
+    }
+?>

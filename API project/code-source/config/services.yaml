@@ -22,9 +22,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    App\Service\UtilDB:
+    App\Controller\API\EtudiantApiController:
+        tags: ['controller.service_arguments']
         arguments:
-            $dsn: '%env(resolve:DATABASE_URL)%'
-            $userName: '%env(resolve:DATABASE_USER)%'
-            $password: '%env(resolve:DATABASE_PASSWORD)%'
+            $connection: '@doctrine.dbal.default_connection'
+
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']

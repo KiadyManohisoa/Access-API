@@ -1,35 +1,29 @@
-
-
 services:
-  app:
-    build:
-      context: .  # Utiliser le Dockerfile du projet
-      dockerfile: Dockerfile  # Assurez-vous que Dockerfile est bien le nom du fichier Docker
-    container_name: inscription_app
-    working_dir: /var/www/code-source
-    command: php -S 0.0.0.0:8000 -t public
-    volumes:
-      - ./code-source:/var/www/code-source
+  # Service pour l'application Symfony
+  symfony:
+    build: .
+    container_name: symfony_app
     ports:
-      - "8000:8000"
+      - "5000:5000"  # Mappe le port 5000 du conteneur au port 5000 de l'hôte
+    volumes:
+      - ./code-source:/var/www/html  # Monte le répertoire local 'code-source' dans le conteneur
     environment:
-      APP_ENV: dev
-      PHP_ENABLE_PGSQL: 1
+      - DATABASE_URL=pgsql:host=db;port=5432;dbname=accessapi  # Connexion à PostgreSQL via le service db
     depends_on:
-      - db
+      - db  # L'application dépend du service 'db'
 
+  # Service pour la base de données PostgreSQL
   db:
-    image: postgres:15
-    container_name: inscription_db
+    image: postgres:15.3
+    container_name: symfony_db
     environment:
-      POSTGRES_USER: api
-      POSTGRES_PASSWORD: api
-      POSTGRES_DB: accessapi
+      POSTGRES_DB: accessapi  # Base de données à créer
+      POSTGRES_USER: api  # Utilisateur de la base
+      POSTGRES_PASSWORD: api  # Mot de passe de l'utilisateur
     ports:
-      - "5433:5432"  # Utilisez le bon port pour éviter le conflit
+      - "5432:5432"  # Mappe le port PostgreSQL du conteneur au port 5432 de l'hôte
     volumes:
-      - ./docker/data:/var/lib/postgresql/data
-
+      - db_data:/var/lib/postgresql/data  # Volume pour persister les données de la base
 
 volumes:
-  db_data:
+  db_data:  # Définit un volume nommé pour stocker les données PostgreSQL

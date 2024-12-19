@@ -69,7 +69,7 @@ class ControllerAPI extends AbstractController
         }
     }
 
-    #[Route('/access-api/compte/create', name: 'utilisateur_create', methods: ['POST'] )]
+    #[Route('/access-api/compte/create', name: 'compte_create', methods: ['POST'] )]
     public function createCompte(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);

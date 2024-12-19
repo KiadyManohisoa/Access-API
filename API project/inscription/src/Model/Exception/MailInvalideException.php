@@ -7,7 +7,6 @@
     class MailInvalideException extends Exception
     {
         private string $emailInvalide ;
-        private static $code = 0 ;
 
         public function setEmailInvalide(string $emailInvalide): void{
             $this->emailInvalide = $emailInvalide;
@@ -21,7 +20,7 @@
         {
             $this->message = $message ;
             $this->setEmailInvalide($emailInvalide);
-            parent::__construct($this->message, $this->code, null);
+            parent::__construct($this->message, 0, null);
         }
     } 
 

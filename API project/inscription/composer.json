@@ -16,8 +16,10 @@
         "symfony/dotenv": "7.1.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.1.*",
+        "symfony/http-client": "7.1.*",
         "symfony/mailer": "7.1.*",
         "symfony/runtime": "7.1.*",
+        "symfony/serializer": "7.1.*",
         "symfony/twig-bundle": "7.1.*",
         "symfony/yaml": "7.1.*"
     },
@@ -69,5 +71,8 @@
             "allow-contrib": false,
             "require": "7.1.*"
         }
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.61"
     }
 }

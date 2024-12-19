@@ -2,50 +2,81 @@
 
 namespace App\Service;
 
-use App\Model\Exception\MailIntrouvableException;
 use App\Model\Exception\MailInvalideException;
+use App\Model\Exception\MailIntrouvableException;
+use App\Model\Exception\MailNonEnvoyeException;
+
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Email;
 
 class ServiceMail
 {
-    private MailerInterface $mailer;
-    function estMailValide(string $email): bool
+    public static string  $apiKey = "4784f2b9e9f0436791203b1c2c16bbe8";
+    public static string $urlVerification = "https://emailvalidation.abstractapi.com/v1/";
+
+    public static string  $delivrabitilite = "DELIVERABLE";            // valeur de réponse par défaut
+
+    private $mailer;
+    private $client;
+
+    public function __construct(MailerInterface $mailer, HttpClientInterface $client)
     {
-        // Expression régulière pour valider la syntaxe d'un e-mail
-        $pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
-        
-        return (bool)preg_match($pattern, $email);
+        $this->mailer = $mailer;
+        $this->client = $client;
     }
-
-    public function verifierMail(string $email, string $lien): void
+    function estValide(string $email): bool
     {
+        try {
+            $url = self::$urlVerification;
 
-        if (!$this->estMailValide($email)) {
-            throw new MailInvalideException("L'adresse e-mail '{$email}' est invalide.",$email );
+            $reponse = $this->client->request('GET', $url, [
+                'query' => [
+                    'api_key' => self::$apiKey, 
+                    'email' => $email,
+                ],
+            ]);
+            $statusCode = $reponse->getStatusCode();
+            if ($statusCode >= 200 && $statusCode < 300) {
+
+                $reponseTab =  $reponse->toArray(); 
+                if($reponseTab['deliverability']==self::$delivrabitilite) return true ;
+                
+                else throw new MailIntrouvableException("Le mail n'a pas été trouvé", $email);
+            }
+
+            throw new \RuntimeException("Réponse invalide du web service : Code $statusCode");
+
+        } catch (TransportExceptionInterface | ClientExceptionInterface | ServerExceptionInterface | RedirectionExceptionInterface $e) {
+
+            throw new \RuntimeException("Impossible d\'envoyer la requête au web service. : '{$e}'", 0, $e);
         }
-
-        // try {
-        //     if (rand(0, 9) < 1) {
-        //         throw new MailIntrouvableException("Impossible d'envoyer l'e-mail à '{$email}'.", $email);
-        //     }
-        // }
-
     }
 
-    public function envoyerMail(string $email, string $lien): void{
+    function envoyerMail(string $recepteur, string $url): void{
 
-        // // Créer l'email
-        // $email = (new TemplatedEmail())
-        // ->from('symfony@example.com')
-        // ->to($to)
-        // ->subject('Invitation au Gala de Noël')
-        // ->htmlTemplate('emails/page.html.twig')
-        // ->context([])
-        // ->embed(fopen($headerImagePath, 'r'), 'header_image'); // Image en CID
+        $email = (new Email())
+            ->from('accessAPI@monfournisseur.com')  // Utilise un adresse email dédiée pour l'envoi
+            ->to($recepteur)
+            ->subject('Confirmez votre adresse email')
+            ->html("<p>Affirmer votre inscription avec ACCESS-API : <a href=google.com>Confirmer</a></p>");
 
-        // // Envoyer l'email
-        //  $this->mailer->send($email);
+        try {
+
+            $this->mailer->send($email);
+
+        } catch (TransportExceptionInterface $e) {
+
+            throw new MailNonEnvoyeException('Impossible d\'envoyer l\'email.', $e); // Gestion d'erreur personnalisée
+        } catch (\Exception $e) {
+
+            throw new \RuntimeException("Une erreur inattendue est survenue lors de l\'envoi de l\'email: '{$e}'");
+        }
     }
 
 

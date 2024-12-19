@@ -1,7 +1,7 @@
 <?php
     
     // src/Controller/GenreController.php
-    namespace App\Controller\Test;
+    namespace App\Controller\API;
 
     use App\Model\Genre;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

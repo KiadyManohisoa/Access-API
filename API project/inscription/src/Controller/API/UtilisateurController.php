@@ -1,7 +1,7 @@
 <?php
     
     // src/Controller/GenreController.php
-    namespace App\Controller\Test;
+    namespace App\Controller\API;
 
     use App\Model\Utilisateur;
     use App\Service\ReponseJSON;
@@ -29,13 +29,13 @@
             $this->response = $response;
         }
 
-        #[Route('/api/utilisateurs', methods : 'GET')]
+        #[Route('/api/utilisateurs', methods : 'GET')]      // liste des utilisateurs
         public function liste(): JsonResponse
         {
             return new JsonResponse($this->utilisateur->getAll($this->connection));
         }
 
-        #[Route('/api/utilisateur', methods : 'POST')]
+        #[Route('/api/utilisateur', methods : 'POST')]      
 
         public function inscription(Request $request, Util $util, ServiceMail $serviceMail): JsonResponse
         {
@@ -69,6 +69,25 @@
 
         }
 
+        #[Route('/api/utilisateur', methods : 'PUT')]
+        public function modifier(Request $request, Util $util, ServiceMail $serviceMail): JsonResponse{
+
+            $data = json_decode($request->getContent(), true);
+            if(!isset( $data['id'] )) return $this->response->rendre('Modification échouée', 400, "Identifiant manquant", null);
+
+            try {
+                
+                $utilisateur = $this->utilisateur->construireObject($data);
+                $utilisateur->setId($data['id']);
+                $utilisateur->update($this->connection);
+                return $this->response->rendre('Modification réussie', 200, null, ['utilisateur'=>$utilisateur]);
+                
+
+            } catch(Exception $e){
+                return $this->response->rendre('Modification échouée', 400,  'Erreur lors de la modification du profil : ' . $e->getMessage(), null);
+            }
+
+        }
 
     
     }   

@@ -175,6 +175,23 @@ class Utilisateur
         $this->setId($id);
     }
 
+    public function update(Connection $connection): void
+    {
+        $query = "UPDATE Utilisateur SET mail = ?, mdp = ?, nom = ?, prenom = ?, date_naissance = ?, idGenre = ?, salt = ? WHERE id = ?";
+
+        $connection->executeStatement($query, [
+            $this->getMail(),
+            $this->getMdp(),
+            $this->getNom(),
+            $this->getPrenom(),
+            $this->getDateNaissance() ? $this->getDateNaissance()->format('Y-m-d') : null,
+            $this->getGenre() ? $this->getGenre()->getId() : null,
+            $this->getSalt(),
+            $this->getId()
+        ]);
+    }
+
+
     // Inscription 
 
     public function s_inscrire(Connection $connection, Util $util, ServiceMail $serviceMail):void{

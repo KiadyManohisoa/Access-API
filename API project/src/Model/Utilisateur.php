@@ -56,8 +56,8 @@ class Utilisateur
             // Si tout est valide, instancier l'objet Compte
             $compte->setId($id);
             $compte->setUtilisateur($this);
-            $compte->setTentative(new Tentative((int)$result['d_nb_tentative'], $dateDebloquage, $compte));
-            $compte->setPin(new Pin($result['d_pin_actuel'], new \DateTime($result['d_date_expiration_pin']), $compte));
+            $compte->setTentative(new Tentative((int)$result['d_nb_tentative'], $dateDebloquage, $compte->getId()));
+            $compte->setPin(new Pin($result['d_pin_actuel'], new \DateTime($result['d_date_expiration_pin']), $compte->getId()));
         } catch (\Exception $e) {
             throw $e;
         }

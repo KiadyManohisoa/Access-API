@@ -8,33 +8,33 @@ class Pin
 {
     public string $pin;
     public DateTime $dateExpiration;
-    public Compte $compte;
+    public string $idCompte;
 
     public function insert($connection): void
     {
         $data = [
             'pin' => $this->getPin(),
             'date_expiration' => $this->getDateExpiration()->format('Y-m-d H:i:s'),  // Formater la date pour l'insertion
-            'idcompte' => $this->getCompte()->id  
+            'idcompte' => $this->getIdCompte()  
         ];
         $connection->insert('pin', $data);
     }
 
-    public function __construct(string $pin='', \DateTime $dateExpiration= new DateTime(), Compte $compte = new Compte())
+    public function __construct(string $pin='', \DateTime $dateExpiration= new DateTime(), string $idCompte='')
     {
         $this->pin = $pin;
         $this->dateExpiration = $dateExpiration;
-        $this->compte = $compte;
+        $this->idCompte = $idCompte;
     }
 
-    public function getCompte():Compte
+    public function getIdCompte():string
     {
-        return $this->compte;
+        return $this->idCompte;
     }
 
-    public function setCompte(Compte $compte): void
+    public function setIdCompte(string $idCompte): void
     {
-        $this->compte = $compte;
+        $this->idCompte = $idCompte;
     }
 
     public function getPin(): string

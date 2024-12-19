@@ -5,16 +5,16 @@ namespace App\Model;
 use DateTime;
 use Doctrine\DBAL\Connection;
 
-
 class Tentative
 {
+
     public int $nombre;
     public DateTime $dateDisponibilite;
-    public Compte $compte;
+    public string $idCompte;
 
     public function insert(Connection $connection): void
     {
-        $idCompte = $this->getCompte()->getId(); 
+        $idCompte = $this->getIdCompte(); 
 
         // Insérer dans la table `tentative`
         $connection->insert(
@@ -27,22 +27,21 @@ class Tentative
     }
 
 
-    public function __construct(int $nombre=0, \DateTime $dateDisponibilite=new DateTime(), Compte $compte = new Compte())
+    public function __construct(int $nombre=0, \DateTime $dateDisponibilite=new DateTime(), string $idCompte = '')
     {
         $this->nombre = $nombre;
         $this->dateDisponibilite = $dateDisponibilite;
-        $this->compte = $compte;
+        $this->idCompte = $idCompte;
     }
 
-    public function getCompte():Compte
-    {
-        return $this->compte;
+    public function getIdCompte() {
+        return $this->idCompte;
     }
 
-    public function setCompte(Compte $compte): void
-    {
-        $this->compte = $compte;
+    public function setIdCompte(string $idCompte) {
+        $this->idCompte = $idCompte;
     }
+
     
     public function getNombre(): int
     {

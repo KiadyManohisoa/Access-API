@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Model\Exception;
+    namespace App\Exception\Mail;
 
     use Exception;
     use Throwable;

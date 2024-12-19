@@ -15,22 +15,23 @@ class Compte
     #[ORM\Column(type: 'integer')]
     private ?int $d_nb_tentative = 0;
 
-
-    #[ORM\Column(type: 'datetime' , nullable : true)]
-    private ?\DateTimeInterface $d_date_debloquage;
-
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?DateTimeInterface $d_date_debloquage = null;
 
     #[ORM\Column(type: 'string')]
-    private ?string $d_pin_actuel;
+    private ?string $d_pin_actuel = null;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?DateTimeInterface $d_date_expiration_pin = null;
 
-    #[ORM\Column(type: 'datetime'  , nullable : true)]
-    private ?DateTimeInterface $d_date_expiration_pin;
+    #[ORM\Column(type: 'string', nullable: false)]
+    private ?string $idUtilisateur = null;
 
-
-    #[ORM\Column(type: 'string' ,nullable : false)]
-    private ?string $idUtilisateur;
-
+    public function __construct()
+    {
+        // Initialisation des propriétés si besoin
+        $this->d_date_debloquage = new \DateTime(); // Assurez-vous de ne pas initialiser à null si cela n'est pas voulu
+    }
 
     public function getId(): ?string
     {
@@ -56,10 +57,10 @@ class Compte
 
     public function getDDateDebloquage(): ?string
     {
-        return $this->d_date_debloquage->format('Y-m-d H:i:s');
+        return $this->d_date_debloquage?->format('Y-m-d H:i:s');
     }
 
-    public function setDDateDebloquage(?\DateTimeInterface $d_date_debloquage): self
+    public function setDDateDebloquage(?DateTimeInterface $d_date_debloquage): self
     {
         $this->d_date_debloquage = $d_date_debloquage;
         return $this;
@@ -78,7 +79,7 @@ class Compte
 
     public function getDDateExpirationPin(): ?string
     {
-        return $this->d_date_expiration_pin->format('Y-m-d H:i:s');
+        return $this->d_date_expiration_pin?->format('Y-m-d H:i:s');
     }
 
     public function setDDateExpirationPin(?DateTimeInterface $d_date_expiration_pin): self

@@ -1,0 +1,47 @@
+<?php 
+namespace App\EventListener;
+
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use App\Exception\Mail\MailIntrouvableException;
+
+class ExceptionListener
+{
+    public function onKernelException(ExceptionEvent $event): void
+    {
+        $exception = $event->getThrowable();
+        $statusCode = 500; // Default to Internal Server Error
+        $message = 'Erreur interne du serveur';
+
+        // Gestion spécifique des exceptions personnalisées
+        if ($exception instanceof \InvalidArgumentException) {
+            $statusCode = 400; // Bad Request
+            $message = $exception->getMessage();
+        } elseif ($exception instanceof \App\Exception\Mail\MailIntrouvableException) {
+            $statusCode = 404; // Not Found
+            $message = $exception->getMessage();
+        } elseif ($exception instanceof \App\Exception\Model\AuthentificationException) {
+            $statusCode = 401; // Unauthorized
+            $message = $exception->getMessage();
+        } elseif ($exception instanceof \App\Exception\Model\CompteException) {
+            $statusCode = 403; // Forbidden
+            $message = $exception->getMessage();
+        } elseif ($exception instanceof HttpExceptionInterface) {
+            // Gestion des exceptions Http génériques
+            $statusCode = $exception->getStatusCode();
+            $message = $exception->getMessage();
+        }
+
+        // Construire la réponse JSON
+        $response = new JsonResponse([
+            'status' => $statusCode < 400 ? 'success' : 'error',
+            'code' => $statusCode,
+            'error' => $statusCode >= 400 ? $message : null,
+            'data' => null, // Par défaut, pas de données en cas d'exception
+        ], $statusCode);
+
+        // Remplacer la réponse de l'événement
+        $event->setResponse($response);
+    }
+}

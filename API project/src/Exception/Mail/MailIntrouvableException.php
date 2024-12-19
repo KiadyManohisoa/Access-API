@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Model\Exception;
+    namespace App\Exception\Mail;
 
     use Exception;
 
@@ -16,12 +16,13 @@
             return $this->emailInvalide;
         }
 
-        public function __construct(string $message="Mail inexistant", string $emailInvalide)
+        public function __construct(string $emailInvalide, string $message = "Mail inexistant")
         {
-            $this->message = $message ;
+            $this->message = $message;
             $this->setEmailInvalide($emailInvalide);
             parent::__construct($this->message, 0, null);
         }
+        
     } 
 
 ?>

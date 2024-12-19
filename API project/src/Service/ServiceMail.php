@@ -2,9 +2,8 @@
 
 namespace App\Service;
 
-use App\Model\Exception\MailInvalideException;
-use App\Model\Exception\MailIntrouvableException;
-use App\Model\Exception\MailNonEnvoyeException;
+use App\Exception\Mail\MailIntrouvableException;
+use App\Exception\Mail\MailNonEnvoyeException;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -14,6 +13,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class ServiceMail
 {
@@ -58,13 +58,14 @@ class ServiceMail
         }
     }
 
-    function envoyerMail(string $recepteur, string $url): void{
+    function envoyerMail(string $recepteur, array $contexte, string $contenu, string $objet): void{
 
-        $email = (new Email())
+        $email = (new TemplatedEmail())
             ->from('accessAPI@monfournisseur.com')  // Utilise un adresse email dédiée pour l'envoi
             ->to($recepteur)
-            ->subject('Confirmez votre adresse email')
-            ->html("<p>Affirmer votre inscription avec ACCESS-API : <a href=google.com>Confirmer</a></p>");
+            ->subject($objet)
+            ->htmlTemplate($contenu)
+            ->context($contexte);
 
         try {
 

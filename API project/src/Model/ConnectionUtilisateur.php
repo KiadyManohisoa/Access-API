@@ -58,4 +58,42 @@ class ConnectionUtilisateur
         }
     }
 
+    public function creerToken(): TokenCompte
+    {
+        $utilitaire = new Utilitaire();
+        $token = new TokenCompte();
+        $token->setId(uniqid());
+        $token->setValeur(bin2hex(random_bytes(16)));
+        $token->setDateExpiration($utilitaire->getDatePrevuee(AppConfig::DUREE_VALIDITE_TOKEN));
+        $token->setIdCompte($this->compte->getId());
+
+        return $token;
+    }
+
+    public function reinitialiserNbTentative(Connection $connection): void
+    {
+        $sql = 'UPDATE compte SET nb_tentatives = 0 WHERE id = :id';
+        $stmt = $connection->prepare($sql);
+        $stmt->bindValue('id', $this->compte->getId());
+        $stmt->executeStatement();
+    }
+    public function processus_check_pin(Connection $connection, string $pin): TokenCompte
+    {
+        try {
+            $this->verifier_pin($pin);
+    
+    
+            $token = $this->creerToken();    
+            $token->insert($connection);
+            $this->reinitialiserNbTentative($connection);
+    
+            return $token;
+        } catch (PinInvalideException $e) {
+            $this->verifierNbTentative($connection);
+            throw $e;
+        } catch (\Exception $e) {
+            throw new \RuntimeException("Erreur lors de la vérification du PIN : " . $e->getMessage());
+        }
+    }
+    
 }

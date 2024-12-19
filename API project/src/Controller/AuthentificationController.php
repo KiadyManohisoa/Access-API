@@ -52,7 +52,41 @@ class AuthentificationController extends AbstractController
         return $reponseJson->render($status, $code, $error,$datas);
     } 
     
-
+    #[Route("/api/auth/check-pin", methods: ["POST"])]
+    public function checkPin(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $reponseJson = new ReponseJSON();
+        $data = json_decode($request->getContent(), true);
+    
+        $idCompte = $data['id_compte'] ?? null;
+        $pin = $data['pin'] ?? null;
+    
+        if (!$idCompte || !$pin) {
+            return $reponseJson->render('error', 400, 'ID du compte ou PIN manquant.', null);
+        }
+    
+        try {
+            $compte = Compte::getById($entityManager, $idCompte);
+    
+            if (!$compte) {
+                return $reponseJson->render('error', 404, 'Compte introuvable.', null);
+            }
+    
+            $connectionUtilisateur = new ConnectionUtilisateur($compte);
+            $token = $connectionUtilisateur->processus_check_pin($entityManager->getConnection(), $pin);
+    
+            return $reponseJson->render('success', 200, null, [
+                'message' => 'PIN vérifié avec succès.',
+                'token' => $token->getValeur()
+            ]);
+    
+        } catch (PinInvalideException $e) {
+            return $reponseJson->render('error', 401, 'PIN incorrect.', null);
+        } catch (\Exception $e) {
+            return $reponseJson->render('error', 500, $e->getMessage(), null);
+        }
+    }
+    
 
 
 }

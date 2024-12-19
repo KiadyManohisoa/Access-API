@@ -13,6 +13,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class ServiceMail
 {
@@ -57,13 +58,14 @@ class ServiceMail
         }
     }
 
-    function envoyerMail(string $recepteur, string $url): void{
+    function envoyerMail(string $recepteur, array $contexte, string $contenu, string $objet): void{
 
-        $email = (new Email())
+        $email = (new TemplatedEmail())
             ->from('accessAPI@monfournisseur.com')  // Utilise un adresse email dédiée pour l'envoi
             ->to($recepteur)
-            ->subject('Confirmez votre adresse email')
-            ->html("<p>Affirmer votre inscription avec ACCESS-API : <a href=google.com>Confirmer '{$url}'</a></p>");
+            ->subject($objet)
+            ->htmlTemplate($contenu)
+            ->context($contexte);
 
         try {
 

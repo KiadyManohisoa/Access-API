@@ -4,7 +4,6 @@ namespace App\Model;
 
 use DateTime;
 use Doctrine\DBAL\Connection;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use App\Util\Util;
 use App\Service\ServiceMail;
@@ -145,7 +144,7 @@ class Utilisateur
 
     public static function getById(Connection $connection, string $id): ?Utilisateur
     {
-        $query = 'SELECT * FROM Genre WHERE id = ?';
+        $query = 'SELECT * FROM Utilisateur WHERE id = ?';
         $stmt = $connection->executeQuery($query, [$id]);
         $row = $stmt->fetchAssociative();
 
@@ -190,8 +189,20 @@ class Utilisateur
 
             $this->insert($connection);                 // Enregistrement de l'utilisateur
 
-            $serviceMail->envoyerMail($this->getMail(), $this->getId());
+            $serviceMail->envoyerMail($this->getMail(), ['id'=>$this->getId()], "emails/confirmation.html.twig", "Confirmation d'identité");
 
+        } catch(\Exception $e){
+            throw $e;
+        }
+       
+    }
+
+    public function confirmerInscription(Connection $connection) :void{
+
+        try{
+           
+            $inscription = new Compte(utilisateur:$this);
+            $inscription->insert($connection);
         } catch(\Exception $e){
             throw $e;
         }

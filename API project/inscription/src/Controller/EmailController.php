@@ -13,16 +13,16 @@ class EmailController extends AbstractController
 {
 
     #[Route("/mail", methods: "GET")]
-    public function sendInvitation(ServiceMail $serviceMail): Response
-    {
-            try {
-                $serviceMail->envoyerMail("vetsojoella@gmail.com","");
-            } catch(\Exception $e){
-                return new JsonResponse(["erreur ".$e]); 
-            }
+    // public function sendInvitation(ServiceMail $serviceMail): Response
+    // {
+    //         try {
+    //             $serviceMail->envoyerMail("vetsojoella@gmail.com","");
+    //         } catch(\Exception $e){
+    //             return new JsonResponse(["erreur ".$e]); 
+    //         }
 
-        return new Response('Invitation envoyée avec succès.');
-    }
+    //     return new Response('Invitation envoyée avec succès.');
+    // }
 
     #[Route("/mailVerification", methods: ["GET"])]
     public function verification(ServiceMail $serviceMail): Response

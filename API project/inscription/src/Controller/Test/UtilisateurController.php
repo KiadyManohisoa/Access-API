@@ -4,7 +4,8 @@
     namespace App\Controller\Test;
 
     use App\Model\Utilisateur;
-    use App\Util\Util;
+use App\Service\ReponseJSON;
+use App\Util\Util;
     use App\Service\ServiceMail;
 
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,16 +19,18 @@
     {
         private $utilisateur;
         private Connection $connection ;
+        private ReponseJSON $response; 
 
 
-        public function __construct(Utilisateur $utilisateur, Connection $connection)
+        public function __construct(Utilisateur $utilisateur, Connection $connection, ReponseJSON $response)
         {
             $this->utilisateur = $utilisateur;
             $this->connection = $connection;
+            $this->response = $response;
         }
 
         #[Route('/utilisateurs', methods : 'GET')]
-        public function liste(Request $request): JsonResponse
+        public function liste(): JsonResponse
         {
             return new JsonResponse($this->utilisateur->getAll($this->connection));
         }
@@ -42,21 +45,32 @@
                 
                 $utilisateur = $this->utilisateur->construireObject($data);
                 $utilisateur->s_inscrire($this->connection, $util, $serviceMail);
-               
-                return new JsonResponse([
-                    'id' => $utilisateur->getId(),
-                    'mail' => $utilisateur->getMail(),
-                    'nom' => $utilisateur->getNom(),
-                    'prenom' => $utilisateur->getPrenom(),
-                    'date_naissance' => $utilisateur->getDateNaissance()->format('Y-m-d'),
-                    'genre' => $utilisateur->getGenre()
-                ], 201);
+                return $this->response->rendre('Inscription réussie', 200, null, ['utilisateur'=>$utilisateur]);
+                
 
             } catch(Exception $e){
-                return new JsonResponse(['error' => 'Erreur lors de l\'insertion : ' . $e->getMessage()], 500);
+                return $this->response->rendre('Inscription échouée', 400,  'Erreur lors de l\'insertion : ' . $e->getMessage(), null);
             }
         }
 
-    }
+
+        #[Route('/utilisateur/{id}/confirmation', methods : 'GET', name:'utilisateur_confirmation')]
+        public function confirmation(string $id): JsonResponse {
+            try {
+
+                $utilisateur = $this->utilisateur->getById($this->connection, $id);
+                $utilisateur->confirmerInscription($this->connection);
+                return $this->response->rendre('Confirmation réussi', 200, null, []);
+
+
+            } catch(Exception $e){
+                return $this->response->rendre('Confirmation échouée', 400,  'Erreur lors de la confirmation : ' . $e->getMessage(), null);
+            }
+
+        }
+
+
+    
+    }   
 
 ?>

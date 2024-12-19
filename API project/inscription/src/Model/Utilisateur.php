@@ -186,6 +186,7 @@ class Utilisateur
             $sel = $util->getRandomSalt();
             $hash = $util->getHashPassword($this->getMdp(), $sel);
             $this->setMdp($hash);
+            $this->setSalt($sel);
 
             $this->insert($connection);                 // Enregistrement de l'utilisateur
 

@@ -4,7 +4,12 @@ namespace App\Model;
 
 use DateTime;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+use App\Util\Util;
+use App\Service\ServiceMail;
+use App\Exception\Model\ModelException;
+use App\Exception\Model\ValeurInvalideException;
 
 class Utilisateur
 {
@@ -13,6 +18,7 @@ class Utilisateur
     public string $mdp;
     public string $nom;
     public ?string $prenom;
+    public ?string $salt;
     public ?\DateTime $dateNaissance;
     public Genre $genre;
 
@@ -25,6 +31,7 @@ class Utilisateur
         $this->setPrenom($prenom);
         $this->setDateNaissance($dateNaissance);
         $this->setGenre(new Genre($genre));
+        $this->setSalt("");
     }
 
     // Getters et Setters
@@ -77,6 +84,16 @@ class Utilisateur
     public function setPrenom(?string $prenom): void
     {
         $this->prenom = $prenom;
+    }
+
+    public function getSalt(): ?string
+    {
+        return $this->salt;
+    }
+
+    public function setSalt(?string $salt): void
+    {
+        $this->salt = $salt;
     }
 
     public function getDateNaissance(): \DateTime
@@ -141,16 +158,72 @@ class Utilisateur
 
     public function insert(Connection $connection): void {
 
-        $query = "INSERT INTO Utilisateur (mail, mdp, nom, prenom, date_naissance, idGenre) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
+        if($this->getMail()=="" || $this->getMail()==null || $this->getMdp()=="" || $this->getMdp()==null || $this->getNom()=="" || $this->getNom()==null) {
+
+            throw new ModelException("Données de l'utilisateur invalide", $this);
+        }
+        $query = "INSERT INTO Utilisateur (mail, mdp, nom, prenom, date_naissance, idGenre, salt) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id";
         $stmt = $connection->executeQuery($query, [
             $this->getMail(),
             $this->getMdp(),
             $this->getNom(),
             $this->getPrenom(),
             $this->getDateNaissance()->format('Y-m-d'),
-            $this->getGenre()->getId()
+            $this->getGenre()->getId(),
+            $this->getSalt(),
         ]);
         $id = $stmt->fetchOne();
         $this->setId($id);
     }
+
+    // Inscription 
+
+    public function s_inscrire(Connection $connection, Util $util, ServiceMail $serviceMail):void{
+
+        try{
+            $serviceMail->estValide($this->getMail());          // Si pas throws donc email valide
+
+            // Code de hashage
+            $sel = $util->getRandomSalt();
+            $hash = $util->getHashPassword($this->getMdp(), $sel);
+            $this->setMdp($hash);
+
+            $this->insert($connection);                 // Enregistrement de l'utilisateur
+
+            $serviceMail->envoyerMail($this->getMail(), $this->getId());
+
+        } catch(\Exception $e){
+            throw $e;
+        }
+       
+    }
+
+    public static function construireObject(array $tab):Utilisateur {
+
+        $utilisateur = new Utilisateur();
+        if (!isset($tab['mail'], $tab['mdp'], $tab['nom'], $tab['date_naissance'], $tab['genre'])) {
+            throw new ModelException('Données manquantes', $utilisateur);
+        }
+
+        try {
+            $dateNaissance = new \DateTime($tab['date_naissance']);
+        } catch (\Exception $e) {
+            throw new ValeurInvalideException('Date de naissance invalide', $dateNaissance);
+        }
+
+        $utilisateur = new Utilisateur(
+            id: '', // ID généré par la BDD
+            mail: $tab['mail'],
+            mdp: $tab['mdp'],
+            nom: $tab['nom'],
+            prenom: $tab['prenom'] ?? null,
+            dateNaissance: $dateNaissance,
+            genre: $tab['genre']
+        );
+
+        return $utilisateur ;
+
+    }
+
 }
+

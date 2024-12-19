@@ -2,9 +2,8 @@
 
 namespace App\Service;
 
-use App\Model\Exception\MailInvalideException;
-use App\Model\Exception\MailIntrouvableException;
-use App\Model\Exception\MailNonEnvoyeException;
+use App\Exception\Mail\MailIntrouvableException;
+use App\Exception\Mail\MailNonEnvoyeException;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -64,7 +63,7 @@ class ServiceMail
             ->from('accessAPI@monfournisseur.com')  // Utilise un adresse email dédiée pour l'envoi
             ->to($recepteur)
             ->subject('Confirmez votre adresse email')
-            ->html("<p>Affirmer votre inscription avec ACCESS-API : <a href=google.com>Confirmer</a></p>");
+            ->html("<p>Affirmer votre inscription avec ACCESS-API : <a href=google.com>Confirmer '{$url}'</a></p>");
 
         try {
 

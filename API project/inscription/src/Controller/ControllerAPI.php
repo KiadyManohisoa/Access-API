@@ -18,6 +18,7 @@ class ControllerAPI extends AbstractController
     private $utilisateurRepository;
     private $compteRepo;
 
+
     public function __construct(UtilisateurRepo $utilisateurRepository, CompteRepo $compteRepo)
     {
         $this->utilisateurRepository = $utilisateurRepository;
@@ -59,16 +60,7 @@ class ControllerAPI extends AbstractController
                 throw $e;
             }
             return new JsonResponse([
-                'message' => 'Utilisateur et compte créés avec succès.',
-                'utilisateur' => [
-                    'id' => $user->getId(),
-                    'mail' => $user->getMail(),
-                    'nom' => $user->getNom(),
-                    'prenom' => $user->getPrenom(),
-                    'datenaissance' => $user->getDateNaissance()->format('Y-m-d'),
-                    'idgenre' => $user->getIdGenre(),
-                ]
-
+                'message' => 'Utilisateur et compte créés avec succès.'
             ], 201);
         } catch (\InvalidArgumentException $e) {
             return new JsonResponse(['error' => $e->getMessage()], 400);
@@ -97,12 +89,7 @@ class ControllerAPI extends AbstractController
             $this->compteRepo->create($compte);
 
             return new JsonResponse([
-                'message' => 'Compte créé avec succès.',
-                'compte' => [
-                    'id' => $compte->getId(),
-                    'dateDebloquage' => $compte->getDDateDebloquage()->format('Y-m-d H:i:s'),
-                    'idUtilisateur' => $compte->getIdUtilisateur(),
-                ]
+                'message' => 'Compte créé avec succès.'
             ], 201);
         } catch (\Exception $e) {
             return new JsonResponse([

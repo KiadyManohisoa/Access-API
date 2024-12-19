@@ -32,6 +32,7 @@ class CompteRepo extends ServiceEntityRepository
 
             $stmt->bindValue('d_nb_tentative', $obj->getDNbTentative());
             $stmt->bindValue('d_date_debloquage', $obj->getDDateDebloquage());
+            $stmt->bindValue('d_pin_actuel', $obj->getDPinActuel());
             $stmt->bindValue('d_date_expiration_pin', $obj->getDDateExpirationPin());
             $stmt->bindValue('id_Utilisateur', $obj->getIdUtilisateur() );
 

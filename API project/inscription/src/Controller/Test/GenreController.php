@@ -3,27 +3,32 @@
     // src/Controller/GenreController.php
     namespace App\Controller\Test;
 
-    use App\Repository\GenreRepository;
+    use App\Model\Genre;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+    use Symfony\Component\HttpFoundation\JsonResponse;
+    use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Routing\Annotation\Route;
+
+    use Doctrine\DBAL\Connection;
 
     class GenreController extends AbstractController
     {
-        private $genreRepository;
+        private $genre;
+        private Connection $connection ;
+
 
         // Injection du repository dans le constructeur
-        public function __construct(GenreRepository $genreRepository)
+        public function __construct(Genre $genre, Connection $connection)
         {
-            $this->genreRepository = $genreRepository;
+            $this->genre = $genre;
+            $this->connection = $connection;
         }
 
         #[Route('/genres', methods : 'GET')]
 
         public function getAllGenres(): JsonResponse
         {
-            $genres = $this->genreRepository->getAll();
+            $genres = $this->genre->getAll($this->connection);
             return new JsonResponse( $genres);
 
             }
@@ -32,7 +37,7 @@ use Symfony\Component\HttpFoundation\Response;
 
         public function getGenreById(string $idGenre): JsonResponse
         {
-            $genre = $this->genreRepository->getById($idGenre);
+            $genre = $this->genre->getById($this->connection,$idGenre);
 
             if (!$genre) {
                 return new JsonResponse(['error' => 'Genre not found'], Response::HTTP_NOT_FOUND);

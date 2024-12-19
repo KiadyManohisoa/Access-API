@@ -3,10 +3,10 @@
 namespace App\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Utilisateur;
+use Exception;
 
 class UtilisateurRepo extends ServiceEntityRepository
 {

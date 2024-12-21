@@ -1,0 +1,35 @@
+
+
+services:
+  app:
+    build:
+      context: .  # Utiliser le Dockerfile du projet
+      dockerfile: Dockerfile  # Assurez-vous que Dockerfile est bien le nom du fichier Docker
+    container_name: inscription_app
+    working_dir: /var/www/inscription
+    command: php -S 0.0.0.0:8000 -t public
+    volumes:
+      - ./inscription:/var/www/inscription
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: dev
+      PHP_ENABLE_PGSQL: 1
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: inscription_db
+    environment:
+      POSTGRES_USER: api
+      POSTGRES_PASSWORD: api
+      POSTGRES_DB: accessapi
+    ports:
+      - "5433:5432"  # Utilisez le bon port pour éviter le conflit
+    volumes:
+      - ./docker/data:/var/lib/postgresql/data
+
+
+volumes:
+  db_data:

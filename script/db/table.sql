@@ -55,3 +55,6 @@ CREATE TABLE PIN(
    PRIMARY KEY(id),
    FOREIGN KEY(idCompte) REFERENCES Compte(id)
 );
+
+
+-- alter table Utilisateur add column salt varchar(250);

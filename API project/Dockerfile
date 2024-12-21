@@ -35,10 +35,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # RUN docker-php-ext-install pdo_pgsql 
 
 # Définir le dossier de travail
-WORKDIR /var/www/inscription
+WORKDIR /var/www/code
 
 # Copier le code du projet dans le conteneur
-COPY ./inscription /var/www/inscription
+COPY ./code /var/www/code
 
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
 

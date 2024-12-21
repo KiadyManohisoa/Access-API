@@ -6,10 +6,10 @@ services:
       context: .  # Utiliser le Dockerfile du projet
       dockerfile: Dockerfile  # Assurez-vous que Dockerfile est bien le nom du fichier Docker
     container_name: inscription_app
-    working_dir: /var/www/inscription
+    working_dir: /var/www/code
     command: php -S 0.0.0.0:8000 -t public
     volumes:
-      - ./inscription:/var/www/inscription
+      - ./code:/var/www/code
     ports:
       - "8000:8000"
     environment:

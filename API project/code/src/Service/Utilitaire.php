@@ -27,13 +27,13 @@ class Utilitaire
         return $prochaineDate;
     }
     
-    public function genere_pin(): int {
+    public function genere_pin(): string {
         $longueurPin = AppConfig::LONGUEUR_PIN;
         $pin = '';
         for ($i = 0; $i < $longueurPin; $i++) {
             $pin .= rand(0, 9);  
         }
-        return (int) $pin;
+        return (string) $pin;
     }
 
     public static function getDateActuelle(): DateTime{

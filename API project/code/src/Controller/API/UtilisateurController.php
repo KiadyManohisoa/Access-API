@@ -4,8 +4,8 @@
     namespace App\Controller\API;
 
     use App\Model\Utilisateur;
-use App\Service\HashageService;
-use App\Service\ReponseJSON;
+    use App\Service\HashageService;
+    use App\Service\ReponseJSON;
     use App\Util\Util;
     use App\Service\ServiceMail;
 

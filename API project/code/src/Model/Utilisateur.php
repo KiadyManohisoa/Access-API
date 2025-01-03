@@ -60,6 +60,7 @@
                 
                 // Si tout est valide, instancier l'objet Compte
                 $compte->setId($id);
+                $this->setId($result['id_utilisateur']);
                 $compte->setUtilisateur($this);
                 $compte->setTentative(new Tentative((int)$result['d_nb_tentative'], $dateDebloquage, $compte->getUtilisateur()->getId()));
                 $compte->setPin(new Pin($result['d_pin_actuel'], new \DateTime($result['d_date_expiration_pin']), $compte->getUtilisateur()->getId()));

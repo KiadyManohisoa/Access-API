@@ -33,8 +33,8 @@
 
         public function checkExpirationPin() {
             $dateActuelle = Utilitaire::getDateActuelle();
-            echo 'Date actuelle : ' . $dateActuelle->format('Y-m-d H:i:s T') . PHP_EOL;
-            echo 'Date déblocage : ' . $this->compte->getPin()->getDateExpiration()->format('Y-m-d H:i:s T') . PHP_EOL;
+            // echo 'Date actuelle : ' . $dateActuelle->format('Y-m-d H:i:s T') . PHP_EOL;
+            // echo 'Date déblocage : ' . $this->compte->getPin()->getDateExpiration()->format('Y-m-d H:i:s T') . PHP_EOL;
             if($dateActuelle > $this->compte->getPin()->getDateExpiration()) {
                 throw new PinExpireException(pin:new Pin($this->compte->getPin()->getPin()));
             }

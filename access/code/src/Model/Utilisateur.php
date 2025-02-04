@@ -52,6 +52,12 @@
                     $dateAct = Utilitaire::changeTimeZoneDateTime($dateActuelle);
                     throw new CompteException("Le compte est temporairement bloqué jusqu'au {$dateDispo->format('Y-m-d H:i:s')}. Avec date actuele est {$dateAct->format('Y-m-d H:i:s')}");
                 }
+                else if ($dateDebloquage!=null && $dateActuelle > $dateDebloquage) {
+                    $tentative = new Tentative(0, null, $id);
+                    $compte->setId($id);
+                    $compte->setTentative($tentative);
+                    $compte->update($connection);
+                }
 
                 $serviceHash = new HashageService();
                 if (!$serviceHash->verifyPassword($this->getMdp(),$result['salt'], $mdpHash)) {
@@ -251,6 +257,8 @@
                 $this->setMdp($hash);
                 $this->setSalt($sel);
                 $this->insert($connection);                 // Enregistrement de l'utilisateur
+                $this->confirmerInscription($connection);
+
 
                 $serviceMail->envoyerMail($this->getMail(), ['id'=>$this->getId()], "emails/confirmation.html.twig", "Confirmation d'identité");
 

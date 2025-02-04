@@ -69,6 +69,7 @@ class AuthentificationController extends AbstractController
     
         try {
             $compte = Compte::getById($connection, $idCompte);
+            // echo('checkPin Valeur de la date d_tentative est '.$compte->getTentative()->getDateDisponibilite());
     
             if (!$compte) {
                 return $reponseJson->render('error', 404, 'Compte introuvable.', null);

@@ -50,7 +50,7 @@
                 
 
             } catch(Exception $e){
-                return $this->response->render('Inscription échouée', 400,  'Erreur lors de l\'insertion : ' . $e->getMessage(), null);
+                return $this->response->render('Inscription échouée', 400,  'Inscription échouée : ' . $e->getMessage(), null);
             }
         }
 

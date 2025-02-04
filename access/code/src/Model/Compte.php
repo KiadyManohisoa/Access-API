@@ -11,6 +11,8 @@
     use DateTime;
     use DateInterval;
     use App\Exception\Model\ModelException;
+    use App\Exception\Model\CompteException;
+
 
     class Compte
     {
@@ -18,6 +20,20 @@
         public Utilisateur $utilisateur;
         public Tentative $tentative;
         public Pin $pin;
+
+        public function estCompteBloque($connection) : void {
+            $dateActuelle = Utilitaire::getDateActuelle();
+            $dateDispo = $this->getTentative()->getDateDisponibilite();
+            if($dateDispo!=null) {
+                if($dateActuelle <= $dateDispo) {
+                    throw new CompteException("Le compte est temporairement bloqué jusqu'au {$dateDispo->format('Y-m-d H:i:s')}");
+                } else {
+                    $tentative = new Tentative(nombre:0, dateDisponibilite:null);
+                    $this->setTentative($tentative);
+                    $this->update($connection);
+                }
+            }
+        }
 
         public function update(Connection $connection): void
         {
@@ -148,7 +164,8 @@
             if ($row) {
                 $utilisateur = Utilisateur::getById($connection, $row['id_utilisateur']);
                 $pin = new Pin(pin:$row['d_pin_actuel'], dateExpiration:new DateTime($row['d_date_expiration_pin']));
-                $tentative = new Tentative(nombre:$row['d_nb_tentative'], dateDisponibilite:new DateTime($row['d_date_debloquage']));
+                $tentative = new Tentative(nombre:$row['d_nb_tentative']);
+                $tentative->setDateDisponibiliteStr($row['d_date_debloquage']) ; 
 
                 $compte = new Compte($row['id'], $utilisateur); 
                 $compte->setPin($pin);

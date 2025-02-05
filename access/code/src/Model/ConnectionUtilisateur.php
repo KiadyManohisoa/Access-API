@@ -38,6 +38,10 @@
             if($dateActuelle > $this->compte->getPin()->getDateExpiration()) {
                 throw new PinExpireException(pin:new Pin($this->compte->getPin()->getPin()));
             }
+            // if($dateActuelle >$this->getCompte()->getTentative()->dateDisponibilite){
+            //     throw new AuthentificationException('Votre compte est bloqué');
+
+            // }
         }
     
         public function verifier_pin(string $pin) : bool {
@@ -113,21 +117,24 @@
             $stmt->bindValue('id', $this->compte->getId());
             $stmt->executeStatement();
         }
+
         public function processus_check_pin(Connection $connection, string $pin): TokenCompte
         {
             try {
+                $this->getCompte()->estCompteBloque($connection) ;
                 $this->verifier_pin($pin);
                 $token = $this->creerToken();    
                 $token->insert($connection);
                 $this->reinitialiserNbTentative($connection);
-        
+
                 return $token;
+            // } catch (PinInvalideException | PinExpireException $e) {
             } catch (PinInvalideException $e) {
                 $this->verifierNbTentative($connection);
                 throw $e;
             } catch (\Exception $e) {
                 throw new \RuntimeException("Erreur lors de la vérification du PIN : " . $e->getMessage());
-            }
+            } 
         }
     }
 ?>

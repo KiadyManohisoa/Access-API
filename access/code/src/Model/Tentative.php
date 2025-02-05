@@ -63,5 +63,15 @@
         {
             $this->dateDisponibilite = $dateDisponibilite;
         }
+
+        public function setDateDisponibiliteStr(?string $dateDisponibilite): void
+        {
+            if($dateDisponibilite==null || $dateDisponibilite=='') {
+
+                $this->dateDisponibilite = null;
+                return;
+            } 
+            $this->setDateDisponibilite( new DateTime($dateDisponibilite)) ;
+        }
     }
 ?>

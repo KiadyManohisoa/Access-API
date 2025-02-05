@@ -47,7 +47,7 @@ class ServiceMail
                 $reponseTab =  $reponse->toArray(); 
                 if($reponseTab['deliverability']==self::$delivrabitilite) return true ;
                 
-                else throw new MailIntrouvableException("Le mail n'a pas été trouvé", $email);
+                else throw new MailIntrouvableException($email, "Le mail n'a pas été trouvé");
             }
 
             throw new \RuntimeException("Réponse invalide du web service : Code $statusCode");

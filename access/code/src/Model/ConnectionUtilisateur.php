@@ -128,7 +128,8 @@
                 $this->reinitialiserNbTentative($connection);
 
                 return $token;
-            } catch (PinInvalideException | PinExpireException $e) {
+            // } catch (PinInvalideException | PinExpireException $e) {
+            } catch (PinInvalideException $e) {
                 $this->verifierNbTentative($connection);
                 throw $e;
             } catch (\Exception $e) {

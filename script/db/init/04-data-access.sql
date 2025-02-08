@@ -1,0 +1,1 @@
+INSERT INTO Genre (libelle) VALUES ('homme'), ('femme');

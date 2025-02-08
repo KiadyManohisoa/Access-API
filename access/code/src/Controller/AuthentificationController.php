@@ -40,7 +40,8 @@ class AuthentificationController extends AbstractController
         $datas = null;
         try {
             $connectionUtilisateur->processus_connection($this->connection, $utilisateur, $serviceMail);            
-            $datas = array('message' => 'Vérifiez votre boîte mail car le code secret vous a été transféré', "id"=>$connectionUtilisateur->getCompte()->getId());
+            // $datas = array('message' => 'Vérifiez votre boîte mail car le code secret vous a été transféré', "id"=>$connectionUtilisateur->getCompte()->getId());
+            $datas = array('message' => 'Authentification réussie', "id"=>$connectionUtilisateur->getCompte()->getId());
             $status = 'success';
             $code = 200;
         }

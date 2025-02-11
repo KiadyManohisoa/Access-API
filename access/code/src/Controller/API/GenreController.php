@@ -29,7 +29,7 @@
         public function getAllGenres(): JsonResponse
         {
             $genres = $this->genre->getAll($this->connection);
-            return new JsonResponse( $genres);
+            return new JsonResponse( $genres, JsonResponse::HTTP_OK, ['Content-Type' => 'application/json']);
 
             }
 

@@ -249,7 +249,7 @@
         public function s_inscrire(Connection $connection, HashageService $util, ServiceMail $serviceMail):void{
 
             try{
-                $serviceMail->estValide($this->getMail());          // Si pas throws donc email valide
+                // $serviceMail->estValide($this->getMail());          // Si pas throws donc email valide
 
                 // Code de hashage
                 $sel = $util->getRandomSalt();
@@ -257,7 +257,7 @@
                 $this->setMdp($hash);
                 $this->setSalt($sel);
                 $this->insert($connection);                 // Enregistrement de l'utilisateur
-                $this->confirmerInscription($connection);
+                // $this->confirmerInscription($connection);
 
 
                 $serviceMail->envoyerMail($this->getMail(), ['id'=>$this->getId()], "emails/confirmation.html.twig", "Confirmation d'identité");

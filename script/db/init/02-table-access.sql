@@ -9,6 +9,7 @@ CREATE TABLE Utilisateur(
    id VARCHAR(14)  DEFAULT ('USR') || LPAD(NEXTVAL('s_Utilisateur')::TEXT, 9, '0'),
    mail VARCHAR(50)  NOT NULL,
    mdp VARCHAR(200)  NOT NULL,
+   salt VARCHAR(250)  NOT NULL,
    nom VARCHAR(100)  NOT NULL,
    prenom VARCHAR(30) ,
    date_naissance DATE NOT NULL,
@@ -55,6 +56,3 @@ CREATE TABLE PIN(
    PRIMARY KEY(id),
    FOREIGN KEY(idCompte) REFERENCES Compte(id)
 );
-
-
--- alter table Utilisateur add column salt varchar(250);

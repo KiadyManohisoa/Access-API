@@ -13,6 +13,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class ServiceMail
@@ -58,25 +59,43 @@ class ServiceMail
         }
     }
 
-    function envoyerMail(string $recepteur, array $contexte, string $contenu, string $objet): void{
+    // function envoyerMail(string $recepteur, array $contexte, string $contenu, string $objet): void{
 
+    //     $email = (new TemplatedEmail())
+    //         ->from('accessAPI@monfournisseur.com')  // Utilise un adresse email dédiée pour l'envoi
+    //         ->to($recepteur)
+    //         ->subject($objet)
+    //         ->htmlTemplate($contenu)
+    //         ->context($contexte);
+
+    //     try {
+
+    //         $this->mailer->send($email);
+
+    //     } catch (TransportExceptionInterface $e) {
+
+    //         throw new MailNonEnvoyeException('Impossible d\'envoyer l\'email.', $e); // Gestion d'erreur personnalisée
+    //     } catch (\Exception $e) {
+
+    //         throw new \RuntimeException("Une erreur inattendue est survenue lors de l\'envoi de l\'email: '{$e}'");
+    //     }
+    // }
+
+    public function envoyerMail(string $recepteur, array $contexte, string $contenu, string $objet): void
+    {
         $email = (new TemplatedEmail())
-            ->from('accessAPI@monfournisseur.com')  // Utilise un adresse email dédiée pour l'envoi
-            ->to($recepteur)
+            ->from(new Address('accessAPI@monfournisseur.com', 'Mon Fournisseur')) 
+            ->to(new Address($recepteur))
             ->subject($objet)
             ->htmlTemplate($contenu)
             ->context($contexte);
 
         try {
-
             $this->mailer->send($email);
-
         } catch (TransportExceptionInterface $e) {
-
-            throw new MailNonEnvoyeException('Impossible d\'envoyer l\'email.', $e); // Gestion d'erreur personnalisée
+            throw new \RuntimeException('Impossible d\'envoyer l\'email via MailHog.', 0, $e);
         } catch (\Exception $e) {
-
-            throw new \RuntimeException("Une erreur inattendue est survenue lors de l\'envoi de l\'email: '{$e}'");
+            throw new \RuntimeException('Erreur inattendue lors de l\'envoi de l\'email : ' . $e->getMessage());
         }
     }
 

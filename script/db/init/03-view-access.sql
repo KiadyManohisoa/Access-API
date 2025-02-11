@@ -3,4 +3,4 @@ CREATE OR REPLACE VIEW v_CompteUtilisateur AS
 ON c.id_utilisateur = u.id;
 
 
-set timezone = 'Indian/Antananarivo';
+set timezone = 'Africa/Nairobi';

@@ -79,12 +79,12 @@
         public function processus_connection(Connection $connection, Utilisateur $utilisateur, ServiceMail $serviceMail) : void {
             try {
                 $compte = $utilisateur->se_connecter($connection);
-                // $this->setCompte($compte);
-                // $this->mettre_a_jour_pin($connection);
-                // $context = array(
-                //     'pin' => $this->compte->getPin()->getPin()
-                // );
-                // $serviceMail->envoyerMail($this->compte->getUtilisateur()->getMail(), $context, 'emails/pinverification.html.twig',"Vérification d\'identité");
+                $this->setCompte($compte);
+                $this->mettre_a_jour_pin($connection);
+                $context = array(
+                    'pin' => $this->compte->getPin()->getPin()
+                );
+                $serviceMail->envoyerMail($this->compte->getUtilisateur()->getMail(), $context, 'emails/pinverification.html.twig',"Vérification d\'identité");
             }
             catch(AuthentificationException $e) {
                 $compte = new Compte(utilisateur:$utilisateur);

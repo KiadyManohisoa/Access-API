@@ -1,6 +1,6 @@
 <?php 
 
-    namespace App\Exception\Model;
+    namespace App\Exception\Valeur;
 
     use Exception;
 

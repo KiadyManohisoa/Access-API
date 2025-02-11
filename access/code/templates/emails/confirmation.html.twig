@@ -10,7 +10,7 @@
         Confirmer votre inscription avec ACCESS-API :
     </h3>
     <p>
-        <a href="{{ absolute_url(path('utilisateur_confirmation', { id: id })) }}">
+        <a href="{{ 'http://localhost:8000/api/utilisateur/' ~ id ~ '/confirmation' }}">
             Confirmer
         </a>
     </p>

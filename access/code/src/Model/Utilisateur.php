@@ -257,10 +257,10 @@
                 $this->setMdp($hash);
                 $this->setSalt($sel);
                 $this->insert($connection);                 // Enregistrement de l'utilisateur
-                $this->confirmerInscription($connection);
+                // $this->confirmerInscription($connection);
 
 
-                // $serviceMail->envoyerMail($this->getMail(), ['id'=>$this->getId()], "emails/confirmation.html.twig", "Confirmation d'identité");
+                $serviceMail->envoyerMail($this->getMail(), ['id'=>$this->getId()], "emails/confirmation.html.twig", "Confirmation d'identité");
 
             } catch(\Exception $e){
                 throw $e;
